@@ -44,6 +44,10 @@ normative:
   RFC8693:
 
 informative:
+  MCP:
+    target: https://modelcontextprotocol.io/specification/2025-11-25
+    title: Model Context Protocol Specification
+    date: November 25, 2025
 
 ...
 
@@ -86,6 +90,10 @@ making it possible to differentiate between
 direct, human-present sessions and human-initiated, agentic sessions
 for authorization, auditing, and security purposes.
 
+One example use case is to exchange a KYAPay token for an OAuth access token
+for a Model Context Protocol {{MCP}} service
+when the agent needs to use the MCP service to accomplish its goals.
+
 Early production deployments of KYAPay tokens are described at https://kyapay.org.
 
 # Conventions and Definitions
@@ -99,25 +107,23 @@ The roles defined in {{?I-D.skyfire-kyapayprofile}} are incorporated into this s
 
 # KYAPay Token Exchange
 
-KEY QUESTIONS
+This specification defines the following token type identifier URN.
 
-## Are we performing RFC 8693 Impersonation or Delegation?
+`urn:ietf:params:oauth:token-type:kyapay`:
+: Indicates that the token is a KYAPay token, as defined in {{?I-D.skyfire-kyapayprofile}}.
 
-If Impersonation, I assume that the KYAPay token is the `subject_token` value.
+This identfier is used as the value of the `subject_token_type`
+Token Exchange {{RFC8693}} request parameter when the `subject_token` value
+is a KYAPay token.
 
-If Delegation, there are both `subject_token` and `actor_token` values.
-In this case, which token is the KYAPay token?
-Would the party for whom the token is being requested the agent identity?
-Would the KYAPay token be the Subject Token and contain a `may_act` claim?
-(All of this makes me think we're not using the Delegation Token Exchange flow,
-but if we are, these questions all need to be answered.)
-
-## What token_type are we using for the KYAPay tokens?
-
-Are we using token_type urn:ietf:params:oauth:token-type:jwt?
-Or are we defining a new token_type value such as urn:ietf:params:oauth:token-type:kyapay?
-I assume the former is sufficient - especially since KYAPay tokens are already
-explicitly typed using the "typ" header parameter.
+When when exchanging a KYAPay token for another token,
+the `actor_token` and `actor_token_type` request parameters are not used
+because the KYAPay token contains identifying information for both
+the principal on whose behalf the request is being made
+(in the Human Identity (`hid`) claim) and
+the agent that is authorized to act on behalf on the principal
+(in the Agent Platform Identity (`apd`) claim and/or
+in the Agent Identity (`aid`) claim).
 
 
 # Security Considerations
